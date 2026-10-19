@@ -10,16 +10,13 @@ public class PlayerMovement : MonoBehaviour
     private float horizontal;
     [SerializeField] private float speed = 8f;
     [SerializeField] private float jumpingPower = 16f;
+    [SerializeField] private float groundCheckRadius = 0.2f;
     private bool isFacingRight = true;
 
-    void Start()
-    {
-        // Prevent physics from rotating the player on the Z axis
-        rb.freezeRotation = true;
-    }
 
     void Update()
     {
+            // Flip the player sprite based on movement direction
         if (!isFacingRight && horizontal > 0f)
         {
             Flip();
@@ -32,26 +29,35 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(horizontal * speed * Time.deltaTime, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
     }
 
+
+        // Jumping logic
     public void Jump(InputAction.CallbackContext context)
+{
+    if (context.performed)
     {
-        if (context.performed && IsGrounded())
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
-        }
-
-        if (context.canceled && rb.linearVelocity.y > 0f)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
-        }
+        Debug.Log("Performed fired. Grounded = " + IsGrounded());
     }
+
+    if (context.performed && IsGrounded())
+    {
+        Debug.Log("Jumping");
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
+    }
+
+    if (context.canceled && rb.linearVelocity.y > 0f)
+    {
+        Debug.Log("Jump Canceled");
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+    }
+}// Jumpoing logic
 
     private bool IsGrounded()
     {
-        // Visual debug helper in Scene view to see your ground check radius
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        return Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        
     }
 
     private void Flip()
@@ -66,4 +72,19 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
+
+    //AI help
+
+    private void OnDrawGizmosSelected()
+{
+    if (groundCheck == null) return;
+
+    Gizmos.color = Color.yellow;
+    Gizmos.DrawWireSphere(
+        groundCheck.position,
+        groundCheckRadius
+    );
+}
+
+    
 }
