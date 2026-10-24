@@ -1,3 +1,5 @@
+
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +14,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpingPower = 16f;
     [SerializeField] private float groundCheckRadius = 0.2f;
     private bool isFacingRight = true;
+
+    private bool canDash = true; // Track if the player can dash
+
+    
 
 
     void Update()
@@ -29,7 +35,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
+        if (IsGrounded() == true)
+        {
+            canDash = true; // Allow dashing after touching ground
+        }
     }
 
 
@@ -72,6 +83,27 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = context.ReadValue<Vector2>().x;
     }
+
+        // Dash logic
+    public void Dash(InputAction.CallbackContext context)
+    {
+        
+        float dashMultiplier = 2.3f; // Adjust this value to control the dash distance
+        
+        
+
+        if (context.performed && canDash == true)
+        {
+
+            Debug.Log("Dashing");
+            rb.MovePosition(rb.position + new Vector2(rb.linearVelocity.x, 0f) * speed * Time.fixedDeltaTime * dashMultiplier);
+            canDash = false; // Disable dashing after the first dash
+            
+        }
+
+        
+    }
+
 
     //AI help
 
