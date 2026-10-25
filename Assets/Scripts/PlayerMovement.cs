@@ -15,13 +15,27 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.2f;
     private bool isFacingRight = true;
 
-    private bool canDash = true; // Track if the player can dash
+   
+
+    // Dash variables
+    private bool canDash = true;
+    private bool isDashing = false;
+    private float dashDuration = 0.2f;
+    private float dashPower = 24f;
+    private float dashCooldown = 1f;
 
     
 
 
     void Update()
     {
+        
+
+        if (isDashing)
+        {
+            return;
+        }
+
             // Flip the player sprite based on movement direction
         if (!isFacingRight && horizontal > 0f)
         {
@@ -35,12 +49,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDashing)
+        {
+            return;
+        }
         
         rb.linearVelocity = new Vector2(horizontal * speed, rb.linearVelocity.y);
-        if (IsGrounded() == true)
-        {
-            canDash = true; // Allow dashing after touching ground
-        }
+        
     }
 
 
@@ -85,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
         // Dash logic
-    public void Dash(InputAction.CallbackContext context)
+    /*public void Dash(InputAction.CallbackContext context)
     {
         
         float dashMultiplier = 2.3f; // Adjust this value to control the dash distance
@@ -102,6 +117,29 @@ public class PlayerMovement : MonoBehaviour
         }
 
         
+    }*/
+
+
+    public void Dash(InputAction.CallbackContext context)
+    {
+        if (context.performed && canDash)
+        {
+            StartCoroutine(Dash());
+        }
+    }
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.linearVelocity = new Vector2(transform.localScale.x * dashPower, 0f);
+        yield return new WaitForSeconds(dashDuration);
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 
 

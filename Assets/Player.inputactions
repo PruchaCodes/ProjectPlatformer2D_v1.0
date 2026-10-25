@@ -28,7 +28,7 @@
                     "name": "Fire",
                     "type": "Button",
                     "id": "cf99dad2-eaf1-40a2-97fe-8589362e9f53",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -46,6 +46,15 @@
                     "name": "Dash",
                     "type": "Button",
                     "id": "c17e3d29-3ca7-44ec-bb59-b98f655505e8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "add01afc-e10e-47f7-8e3d-88d425d8517c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -281,6 +290,17 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3e2db698-a729-43a1-9224-98dcdbea1962",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LeftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
