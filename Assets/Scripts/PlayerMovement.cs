@@ -21,7 +21,8 @@ public class PlayerMovement : MonoBehaviour
     private bool canDash = true;
     private bool isDashing = false;
     private float dashDuration = 0.2f;
-    private float dashPower = 24f;
+    private float dashPowerX = 24f;
+    private float dashPowerY = 12f;
     private float dashCooldown = 1f;
 
     
@@ -120,27 +121,45 @@ public class PlayerMovement : MonoBehaviour
     }*/
 
 
-    public void Dash(InputAction.CallbackContext context)
+    /*public void Dash(InputAction.CallbackContext context)
     {
         if (context.performed && canDash)
         {
             StartCoroutine(Dash());
         }
-    }
+    }*/
 
-    private IEnumerator Dash()
+    private IEnumerator Dash(Vector3 difference)
     {
         canDash = false;
         isDashing = true;
         float originalGravity = rb.gravityScale;
-        rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2(transform.localScale.x * dashPower, 0f);
+        //rb.gravityScale = 0f;
+        rb.linearVelocity = new Vector2(difference.x * dashPowerX, difference.y * dashPowerY);
         yield return new WaitForSeconds(dashDuration);
         rb.gravityScale = originalGravity;
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
+
+    
+    public void LeftClick(InputAction.CallbackContext context)
+    {
+        if(context.performed && canDash)
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            mousePos.z = 0f; // Set z to 0 to avoid issues with 2D
+            Vector3 difference = mousePos - transform.position;
+            difference = difference.normalized;
+
+
+            StartCoroutine(Dash(difference));
+        }
+        
+        
+    }
+    
 
 
     //AI help
